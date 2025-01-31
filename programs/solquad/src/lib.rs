@@ -6,6 +6,9 @@ declare_id!("5sFUqUTjAMJARrEafMX8f4J1LagdUQ9Y8TR8HwGNHkU8");
 pub mod solquad {
     use super::*;
 
+    /// Initializes an escrow account for quadratic funding.
+    /// The creator of the escrow account needs to deposit the given amount of lamports.
+    /// The escrow account also keeps track of the total number of projects associated with it.
     pub fn initialize_escrow(ctx: Context<InitializeEscrow>, amount: u64) -> Result<()> {
         let escrow_account = &mut ctx.accounts.escrow_account;
         escrow_account.escrow_creator = ctx.accounts.escrow_signer.key();
@@ -15,6 +18,7 @@ pub mod solquad {
         Ok(())
     }
 
+
     pub fn initialize_pool(ctx: Context<InitializePool>) -> Result<()> {
         let pool_account = &mut ctx.accounts.pool_account;
         pool_account.pool_creator = ctx.accounts.pool_signer.key();
@@ -23,6 +27,7 @@ pub mod solquad {
 
         Ok(())
     }
+
 
     pub fn initialize_project(ctx: Context<InitializeProject>, name: String) -> Result<()> {
         let project_account = &mut ctx.accounts.project_account;
@@ -36,6 +41,7 @@ pub mod solquad {
 
         Ok(())
     }
+
 
     pub fn add_project_to_pool(ctx: Context<AddProjectToPool>) -> Result<()> {
         let escrow_account = &mut ctx.accounts.escrow_account;
@@ -59,6 +65,8 @@ pub mod solquad {
         Ok(())
     }
 
+    /// Votes for the project and increases its vote count and voter amount.
+    /// The total vote count of the pool is also increased.
     pub fn vote_for_project(ctx: Context<VoteForProject>, amount: u64) -> Result<()> {
         let pool_account = &mut ctx.accounts.pool_account;
         let project_account = &mut ctx.accounts.project_account;
@@ -75,6 +83,8 @@ pub mod solquad {
         Ok(())
     }
 
+    /// Distributes the escrow amount among the projects in the pool proportionally to the vote count of each project.
+    /// The vote count of each project is used to calculate the proportional amount of the escrow amount to distribute to each project.
     pub fn distribute_escrow_amount(ctx: Context<DistributeEscrowAmount>) -> Result<()> {
         let escrow_account = &mut ctx.accounts.escrow_account;
         let pool_account = &mut ctx.accounts.pool_account;
